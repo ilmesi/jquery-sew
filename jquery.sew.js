@@ -94,7 +94,15 @@
 
 		var fullStuff = this.getText();
 		var val = fullStuff.substring(0, startpos);
-		val = val.replace(this.expression, separator + this.options.token + replacement);
+		var new_line_prefix = '';
+
+		var matched_data = val.match(this.expression);
+		if (matched_data) {
+			if (matched_data[0].charCodeAt(0) == 10) {
+				new_line_prefix = String.fromCharCode(10);
+			}
+		}
+		val = val.replace(this.expression, new_line_prefix + separator + this.options.token + replacement);
 
 		var posfix = fullStuff.substring(startpos, fullStuff.length);
 		var separator2 = posfix.match(/^\s/) ? '' : ' ';
