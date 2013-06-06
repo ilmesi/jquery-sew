@@ -31,7 +31,7 @@
 		this._defaults = defaults;
 		this._name = pluginName;
 
-		this.expression = new RegExp('(?:^|\\b|\\s)' + this.options.token + '([\\w.]*)$');
+		this.expression = new RegExp('(?:^|\\b|\\s)' + this.options.token + '([\\w.|\-]*)$');
 		this.cleanupHandle = null;
 
 		this.init();

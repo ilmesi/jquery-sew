@@ -10,7 +10,7 @@
         <h3>enable auto-complete by typing @ </h3>
         <div>
         	<h4> Works on any textarea/input element from your document </h4>
-					<textarea style="width:415px; resize:none;"></textarea>
+					<textarea class="normal" style="width:415px; resize:none;"></textarea>
 
 					<h5> Supports unique elements </h5>
 					<input type="text" style="width:415px; resize:none;" />
@@ -20,6 +20,10 @@
 
 					<h5> Prevent repetition </h5>
 					<div class="editable-repeat" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
+
+					<h5> Supports Hyphen chars </h5>
+					<textarea class="hyphen-support" type="text" style="width:415px; height:100px;"></textarea>
+					<br/><br/><br/><br/><br/><br/><br/><br/><br/>
 				</div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -31,6 +35,11 @@
 							  {val:'johnnyhalife', meta:'Johnny Halife'},
 							  {val:'arielflesler', meta:'Ariel Flesler'},
 							  {val:'rbajales', meta:'Raul Bajales'}];
+				var hyphen_values = [{val:'ignacio-ilmesi', meta:'Ignacio Martinez'},
+							  {val:'santiago-tactivos', meta:'Santiago Montero'},
+							  {val:'johnny-halife', meta:'Johnny Halife'},
+							  {val:'ariel-flesler', meta:'Ariel Flesler'},
+							  {val:'r-bajales', meta:'Raul Bajales'}];
 
 				for (var i = 0; i < 10; i++) {
 					values.push({val: 'johnnyhalife' + i})
@@ -48,7 +57,7 @@
 				};
 
 				// here is how we use it
-				$('textarea').sew({values: values, elementFactory: elementFactory});
+				$('textarea.normal').sew({values: values, elementFactory: elementFactory});
 
 
 				// with repetition but unique flag
@@ -58,6 +67,7 @@
 				$('.editable').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
 				$('.editable-repeat').sew({repeat: false, unique: true, values: repeatedElements, elementFactory: elementFactory});
 				$('.editable-position').sew({repeat: false, unique: true, values: values, elementFactory: elementFactory});
+				$('.hyphen-support').sew({repeat: true, unique: false, values: hyphen_values, elementFactory: elementFactory});
 			});
 		</script>
     </body>
