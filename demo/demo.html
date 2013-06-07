@@ -26,6 +26,9 @@
 
 					<h5> Supports Ajax </h5>
 					<textarea class="ajax-support" type="text" style="width:415px; height:100px;"></textarea>
+
+					<h5> Multiple Tokens </h5>
+					<textarea class="multi-tokens-support" type="text" style="width:415px; height:100px;"></textarea>
 					<br/><br/><br/><br/><br/><br/><br/><br/><br/>
 				</div>
 
@@ -43,6 +46,11 @@
 							  {val:'johnny-halife', meta:'Johnny Halife'},
 							  {val:'ariel-flesler', meta:'Ariel Flesler'},
 							  {val:'r-bajales', meta:'Raul Bajales'}];
+				var hash_values = [{val:'hash-ignacio-ilmesi', meta:'Ignacio Martinez hashed'},
+							  {val:'hash-santiago-tactivos', meta:'Santiago Montero hashed'},
+							  {val:'hash-johnny-halife', meta:'Johnny Halife hashed'},
+							  {val:'hash-ariel-flesler', meta:'Ariel Flesler hashed'},
+							  {val:'hash-r-bajales', meta:'Raul Bajales hashed'}];
 
 				for (var i = 0; i < 10; i++) {
 					values.push({val: 'johnnyhalife' + i})
@@ -51,9 +59,9 @@
 
 				var customItemTemplate = "<div><span />&nbsp;<small /></div>";
 
-				function elementFactory(element, e) {
+				function elementFactory(element, e, token) {
 					var template = $(customItemTemplate).find('span')
-						.text('@' + e.val).end()
+						.text(token + e.val).end()
 						.find('small')
 						.text("(" + (e.meta || e.val) + ")").end();
 					element.append(template);
@@ -90,6 +98,9 @@
 						elementFactory: elementFactory
 					});
 				});
+
+				$('.multi-tokens-support').sew({repeat: true, token: '@', unique: false, values: hyphen_values, elementFactory: elementFactory});
+				$('.multi-tokens-support').sew({repeat: true, token: '#', unique: false, values: hash_values, elementFactory: elementFactory});
 			});
 		</script>
 	</body>

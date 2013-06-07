@@ -6,7 +6,7 @@
 
 (function ($, window, undefined) {
 	// Create the defaults once
-	var elementFactory = function (element, value) {
+	var elementFactory = function (element, value, token) {
 		element.text(value.val);
 	};
 
@@ -131,7 +131,7 @@
 		values.forEach($.proxy(function (e, i) {
 			var $item = $(Plugin.ITEM_TEMPLATE);
 
-			this.options.elementFactory($item, e);
+			this.options.elementFactory($item, e, this.options.token);
 
 			e.element = $item.appendTo(container).bind('click', $.proxy(this.onItemClick, this, e)).bind('mouseover', $.proxy(this.onItemHover, this, i));
 		}, this));
@@ -291,8 +291,10 @@
 
 	$.fn[pluginName] = function (options) {
 		return this.each(function () {
-			if(!$.data(this, 'plugin_' + pluginName)) {
-				$.data(this, 'plugin_' + pluginName, new Plugin(this, options));
+			var plugin = new Plugin(this, options);
+			var token = plugin.options.token;
+			if(!$.data(this, 'plugin_' + pluginName + '_' + token)) {
+				$.data(this, 'plugin_' + pluginName + '_' + token, plugin);
 			}
 		});
 	};
