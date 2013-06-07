@@ -23,6 +23,9 @@
 
 					<h5> Supports Hyphen chars </h5>
 					<textarea class="hyphen-support" type="text" style="width:415px; height:100px;"></textarea>
+
+					<h5> Supports Ajax </h5>
+					<textarea class="ajax-support" type="text" style="width:415px; height:100px;"></textarea>
 					<br/><br/><br/><br/><br/><br/><br/><br/><br/>
 				</div>
 
@@ -50,9 +53,9 @@
 
 				function elementFactory(element, e) {
 					var template = $(customItemTemplate).find('span')
-															.text('@' + e.val).end()
-												   		.find('small')
-															.text("(" + (e.meta || e.val) + ")").end();
+						.text('@' + e.val).end()
+						.find('small')
+						.text("(" + (e.meta || e.val) + ")").end();
 					element.append(template);
 				};
 
@@ -68,7 +71,26 @@
 				$('.editable-repeat').sew({repeat: false, unique: true, values: repeatedElements, elementFactory: elementFactory});
 				$('.editable-position').sew({repeat: false, unique: true, values: values, elementFactory: elementFactory});
 				$('.hyphen-support').sew({repeat: true, unique: false, values: hyphen_values, elementFactory: elementFactory});
+
+				// Needs --allow-file-access-from-files in chrome
+				$.ajax({
+					url: "response.json",
+					dataType: "json",
+				}).error(function (request, textStatus, errorThrown) {
+					$('.ajax-support').attr('placeholder','Error - You need to activate Access-Control-Allow-Origin for this example');
+				}).done(function() {
+					$('.ajax-support').sew({
+						repeat: true,
+						unique: false,
+						ajax: true,
+						ajaxParams: {
+							url: "response.json",
+							dataType: "json",
+						},
+						elementFactory: elementFactory
+					});
+				});
 			});
 		</script>
-    </body>
+	</body>
 </html>

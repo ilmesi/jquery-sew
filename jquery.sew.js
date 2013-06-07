@@ -15,6 +15,8 @@
 		defaults = {
 			token: '@',
 			elementFactory: elementFactory,
+			ajax: false,
+			ajaxParams: null,
 			values: [],
 			unique: false,
 			repeat: true
@@ -44,17 +46,17 @@
 	Plugin.KEYS = [40, 38, 13, 27, 9];
 
 	Plugin.prototype.init = function () {
-		if(this.options.values.length < 1) return;
+		if(this.options.values.length < 1 && !this.options.ajax) return;
 
 		this.$element
-									.bind('keyup', $.proxy(this.onKeyUp, this))
-									.bind('keydown', $.proxy(this.onKeyDown, this))
-									.bind('focus', $.proxy(this.renderElements, this, this.options.values))
-									.bind('blur', $.proxy(this.remove, this));
+			.bind('keyup', $.proxy(this.onKeyUp, this))
+			.bind('keydown', $.proxy(this.onKeyDown, this))
+			.bind('focus', $.proxy(this.onKeyUp, this))
+			.bind('blur', $.proxy(this.remove, this));
 	};
 
 	Plugin.prototype.reset = function () {
-		if(this.options.unique) {
+		if(this.options.unique && !this.options.ajax) {
 			this.options.values = Plugin.getUniqueElements(this.options.values);
 		}
 
@@ -139,7 +141,7 @@
 	};
 
 	Plugin.prototype.displayList = function () {
-		if(!this.filtered.length) return;
+		if(!this.filtered.length && !this.options.ajax) return;
 
 		this.$itemList.show();
 		var element = this.$element;
@@ -157,30 +159,48 @@
 		this.reset();
 	};
 
+	Plugin.prototype.dispatchRender = function (vals) {
+		if(vals.length) {
+			this.renderElements(vals);
+			this.$itemList.show();
+		} else {
+			this.hideList();
+		}
+	}
+
 	Plugin.prototype.filterList = function (val) {
 		if(val == this.lastFilter) return;
 
 		this.lastFilter = val;
 		this.$itemList.find(".-sew-list-item").remove();
 		var values = this.options.values;
+		var vals = [];
 
+		if (this.options.ajax) {
+			var that = this;
+			$.ajax(
+				$.extend({}, that.options.ajaxParams, {
+					data: {
+						text:val
+					}
+				})
+			).done(function(result) {
+				vals = that.filtered = result;
+				that.dispatchRender(vals);
+			});
+		}
+		else {
+			vals = this.filtered = values.filter($.proxy(function (e) {
+				var exp = new RegExp('\\W*' + this.options.token + e.val + '(\\W|$)');
+				if(!this.options.repeat && this.getText().match(exp)) {
+					return false;
+				}
 
-		var vals = this.filtered = values.filter($.proxy(function (e) {
-			var exp = new RegExp('\\W*' + this.options.token + e.val + '(\\W|$)');
-			if(!this.options.repeat && this.getText().match(exp)) {
-				return false;
-			}
-
-			return	val === "" ||
-							e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 ||
-							(e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
-		}, this));
-
-		if(vals.length) {
-			this.renderElements(vals);
-			this.$itemList.show();
-		} else {
-			this.hideList();
+				return	val === "" ||
+					e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 ||
+					(e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
+			}, this));
+			this.dispatchRender(vals);
 		}
 	};
 
